@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="download" />
+        android:text="check for bulletins" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

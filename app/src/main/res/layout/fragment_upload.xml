@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/image_button"
         android:layout_centerHorizontal="true"
-        android:text="upload" />
+        android:text="upload bulletin" />
 
     <ProgressBar
         android:id="@+id/upload_progress_bar"
