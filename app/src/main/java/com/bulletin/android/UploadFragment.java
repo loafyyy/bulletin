@@ -1,12 +1,15 @@
 package com.bulletin.android;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,7 +26,8 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 
-public class MainActivity extends AppCompatActivity {
+
+public class UploadFragment extends Fragment {
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -39,20 +43,29 @@ public class MainActivity extends AppCompatActivity {
 
     private Context mContext;
 
+    public UploadFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        mContext = this;
+        mContext = getActivity();
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_upload, container, false);
         // find views
-        imagePickerButton = (Button) findViewById(R.id.image_button);
-        uploadButton = (Button) findViewById(R.id.upload_button);
-        imageView = (ImageView) findViewById(R.id.image_view);
-        editText = (EditText) findViewById(R.id.edit_text);
-        uploadProgressBar = (ProgressBar) findViewById(R.id.upload_progress_bar);
-        downloadUrl = (TextView) findViewById(R.id.download_url);
+        imagePickerButton = (Button) view.findViewById(R.id.image_button);
+        uploadButton = (Button) view.findViewById(R.id.upload_button);
+        imageView = (ImageView) view.findViewById(R.id.image_view);
+        editText = (EditText) view.findViewById(R.id.edit_text);
+        uploadProgressBar = view.findViewById(R.id.upload_progress_bar);
+        downloadUrl = (TextView) view.findViewById(R.id.download_url);
 
         // button that allows user to pick image
         imagePickerButton.setOnClickListener(new View.OnClickListener() {
@@ -88,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 uploadButton.setEnabled(false);
 
                 UploadTask uploadTask = storageRef.putBytes(data, metadata);
-                uploadTask.addOnSuccessListener(MainActivity.this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                uploadTask.addOnSuccessListener(getActivity(), new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         uploadProgressBar.setVisibility(View.GONE);
@@ -101,21 +114,17 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+
+        return view;
     }
 
     // after user selects image from gallery, loads it into imageview
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == SELECT_IMAGE && resultCode == RESULT_OK && data != null) {
+        if (requestCode == SELECT_IMAGE && resultCode == Activity.RESULT_OK && data != null) {
             Uri selectedImage = data.getData();
             Glide.with(this).load(selectedImage).into(imageView);
         }
-    }
-
-    public void downloadPage(View v) {
-        Intent intent = new Intent(this, DownloadActivity.class);
-        startActivity(intent);
     }
 }

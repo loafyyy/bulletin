@@ -4,8 +4,10 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
@@ -15,7 +17,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-public class DownloadActivity extends AppCompatActivity {
+
+public class DownloadFragment extends Fragment {
 
     private ImageView downloadedImage;
     private Button downloadButton;
@@ -23,15 +26,24 @@ public class DownloadActivity extends AppCompatActivity {
 
     private FirebaseStorage storage = FirebaseStorage.getInstance();
 
+    public DownloadFragment() {
+        // Required empty public constructor
+    }
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_download);
+        mContext = getActivity();
+    }
 
-        mContext = this;
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_download, container, false);
 
-        downloadedImage = (ImageView) findViewById(R.id.download_image_view);
-        downloadButton = (Button) findViewById(R.id.download_button);
+        downloadedImage = (ImageView) view.findViewById(R.id.download_image_view);
+        downloadButton = (Button) view.findViewById(R.id.download_button);
 
         // load image in Firebase into imageview
         downloadButton.setOnClickListener(new View.OnClickListener() {
@@ -54,5 +66,6 @@ public class DownloadActivity extends AppCompatActivity {
                 });
             }
         });
+        return view;
     }
 }
