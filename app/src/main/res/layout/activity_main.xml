@@ -7,6 +7,13 @@
     android:padding="16dp"
     tools:context="com.bulletin.android.MainActivity">
 
+    <Button
+        android:id="@+id/download_page_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="download page"
+        android:onClick="downloadPage"/>
+
     <ImageView
         android:id="@+id/image_view"
         android:layout_width="200dp"

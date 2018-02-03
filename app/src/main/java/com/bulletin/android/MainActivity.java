@@ -22,7 +22,6 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -78,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 imageView.setDrawingCacheEnabled(false);
                 byte[] data = baos.toByteArray();
 
-                String path = "images/" + UUID.randomUUID() + ".png";
+                String path = "images/" + "bulletin" + ".png";
                 StorageReference storageRef = storage.getReference(path);
 
                 StorageMetadata metadata = new StorageMetadata.Builder()
@@ -113,5 +112,10 @@ public class MainActivity extends AppCompatActivity {
             Uri selectedImage = data.getData();
             Glide.with(this).load(selectedImage).into(imageView);
         }
+    }
+
+    public void downloadPage(View v) {
+        Intent intent = new Intent(this, DownloadActivity.class);
+        startActivity(intent);
     }
 }
