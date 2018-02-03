@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "122936842512",
+    "firebase_url": "https://bulletin-2018.firebaseio.com",
+    "project_id": "bulletin-2018",
+    "storage_bucket": "bulletin-2018.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:122936842512:android:10b05594a639f833",
+        "android_client_info": {
+          "package_name": "com.bulletin.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "122936842512-1qos32q7dscuuobala7d2k7fr5amil1p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtHAJMD77bB1vmk29Qij22QbU84aeh0GQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
