@@ -10,11 +10,12 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -34,9 +35,10 @@ public class UploadFragment extends Fragment {
     // Views
     private Button uploadButton, imagePickerButton;
     private ImageView imageView;
-    private EditText editText;
+    private EditText nameET;
+    private EditText locationET;
     private ProgressBar uploadProgressBar;
-    private TextView downloadUrl;
+    private Spinner spinner;
 
     // id for selecting image
     private static int SELECT_IMAGE = 1;
@@ -59,13 +61,20 @@ public class UploadFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
+
         // find views
         imagePickerButton = (Button) view.findViewById(R.id.image_button);
         uploadButton = (Button) view.findViewById(R.id.upload_button);
         imageView = (ImageView) view.findViewById(R.id.image_view);
-        editText = (EditText) view.findViewById(R.id.edit_text);
         uploadProgressBar = view.findViewById(R.id.upload_progress_bar);
-        downloadUrl = (TextView) view.findViewById(R.id.download_url);
+        spinner = (Spinner) view.findViewById(R.id.bulletin_num_spinner);
+        nameET = (EditText) view.findViewById(R.id.name_edit_text);
+        locationET = (EditText) view.findViewById(R.id.location_edit_text);
+
+        String[] spinnerValues = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getActivity(), android.R.layout.simple_spinner_item, spinnerValues);
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(adapter);
 
         // button that allows user to pick image
         imagePickerButton.setOnClickListener(new View.OnClickListener() {
@@ -90,11 +99,16 @@ public class UploadFragment extends Fragment {
                 imageView.setDrawingCacheEnabled(false);
                 byte[] data = baos.toByteArray();
 
-                String path = "images/" + "bulletin" + ".png";
-                StorageReference storageRef = storage.getReference(path);
+                String bulletin_num = spinner.getSelectedItem().toString();
+                String path = "images/" + "bulletin" + bulletin_num + ".png";
+                final StorageReference storageRef = storage.getReference(path);
+
+                String name = nameET.getText().toString();
+                String location = locationET.getText().toString();
 
                 StorageMetadata metadata = new StorageMetadata.Builder()
-                        .setCustomMetadata("text", editText.getText().toString())
+                        .setCustomMetadata("name", name)
+                        .setCustomMetadata("location", location)
                         .build();
 
                 uploadProgressBar.setVisibility(View.VISIBLE);
@@ -106,10 +120,7 @@ public class UploadFragment extends Fragment {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         uploadProgressBar.setVisibility(View.GONE);
                         uploadButton.setEnabled(true);
-                        Toast.makeText(mContext, "Upload successful!", Toast.LENGTH_SHORT);
-
-                        Uri url = taskSnapshot.getDownloadUrl();
-                        downloadUrl.setText(url.toString());
+                        Toast.makeText(mContext, "Uploaded to " + storageRef.toString(), Toast.LENGTH_LONG).show();
                     }
                 });
             }

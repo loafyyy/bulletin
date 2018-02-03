@@ -8,22 +8,38 @@
         android:id="@+id/image_view"
         android:layout_width="200dp"
         android:layout_height="200dp"
-        android:layout_centerHorizontal="true"
         android:scaleType="fitCenter" />
 
-    <EditText
-        android:id="@+id/edit_text"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/image_view"
-        android:layout_centerHorizontal="true" />
+        android:layout_toRightOf="@id/image_view"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/name_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Event name" />
+
+        <EditText
+            android:id="@+id/location_edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="Location" />
+
+        <Spinner
+            android:id="@+id/bulletin_num_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/image_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/edit_text"
-        android:layout_centerHorizontal="true"
+        android:layout_below="@id/image_view"
         android:text="select image" />
 
     <Button
@@ -41,12 +57,5 @@
         android:layout_below="@id/upload_button"
         android:layout_centerHorizontal="true"
         android:visibility="invisible" />
-
-    <TextView
-        android:id="@+id/download_url"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/upload_button"
-        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>
