@@ -118,5 +118,7 @@ public class SettingsFragment extends Fragment {
     //sign out method
     public void signOut() {
         auth.signOut();
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
     }
 }

@@ -55,10 +55,7 @@ public class DownloadFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // add geofences
-
-                // ((NavigationActivity) getActivity()).addGeofencesHandler();
-
-                downloadPics("images");
+                ((NavigationActivity) getActivity()).addGeofencesHandler();
             }
         });
         return view;
@@ -95,7 +92,7 @@ public class DownloadFragment extends Fragment {
             String folder = intent.getStringExtra("folder");
 
             if (folder.equals("images")) {
-                Toast.makeText(getContext(), "Getting bulletins from Pennovation Center", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Getting bulletins from Penn", Toast.LENGTH_LONG).show();
             }
 
             // download pics

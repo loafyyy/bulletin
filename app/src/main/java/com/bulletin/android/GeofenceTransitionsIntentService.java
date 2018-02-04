@@ -4,7 +4,6 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -30,9 +29,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        Toast.makeText(this, "onHandleIntent", Toast.LENGTH_LONG).show();
-        Log.i("onHandleIntent", "DownloadFragment");
-
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             Log.e(TAG, "GeofencingEvent Error: " + geofencingEvent.getErrorCode());
@@ -56,24 +52,19 @@ public class GeofenceTransitionsIntentService extends IntentService {
                     triggeringGeofences
             );
 
-            // Send notification and log the transition details.
-            Log.i("key", geofenceTransitionDetails);
-
             String folder;
-
-            if (geofenceTransitionDetails.equals(getResources().getString(R.string.geofence_pennovation_key))) {
-                folder = "images";
-                Intent fragmentIntent = new Intent("download");
-                fragmentIntent.putExtra("folder", folder);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(fragmentIntent);
-
-            } else {
-                Toast.makeText(this, "There are no bulletins near you 😔", Toast.LENGTH_LONG).show();
+            for (Geofence geofence : triggeringGeofences) {
+                Log.i("request ID", geofence.getRequestId());
+                if (geofence.getRequestId().equals(getResources().getString(R.string.geofence_penn_key))) {
+                    folder = "images";
+                    Intent fragmentIntent = new Intent("download");
+                    fragmentIntent.putExtra("folder", folder);
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(fragmentIntent);
+                }
             }
 
         } else {
             Toast.makeText(this, "There are no bulletins near you 😔", Toast.LENGTH_LONG).show();
-            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
         }
     }
 
