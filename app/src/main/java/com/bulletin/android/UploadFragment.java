@@ -52,7 +52,6 @@ public class UploadFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mContext = getActivity();
     }
 

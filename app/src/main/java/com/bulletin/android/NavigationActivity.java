@@ -1,7 +1,7 @@
 package com.bulletin.android;
 
-import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,6 +26,7 @@ import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -42,6 +42,10 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
     private CharSequence mTitle;
     private String[] mTabTitles = {"Upload Bulletins", "Check Bulletins"};
 
+    private FirebaseAuth.AuthStateListener authListener;
+    private FirebaseAuth auth;
+    private Context mContext;
+
     // Geofencing
     protected ArrayList<Geofence> mGeofenceList;
     protected GoogleApiClient mGoogleApiClient;
@@ -50,6 +54,33 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_navigation);
+
+        // set up geofencing
+        mGeofenceList = new ArrayList<Geofence>();
+
+        // Get the geofences used. Geofence data is hard coded in this sample.
+        populateGeofenceList();
+        // Kick off the request to build GoogleApiClient.
+        buildGoogleApiClient();
+
+        // authorization
+        //get firebase auth instance
+        auth = FirebaseAuth.getInstance();
+        mContext = this;
+
+        /*
+        authListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user == null) {
+                    // user auth state is changed - user is null
+                    // launch login activity
+                    startActivity(new Intent(mContext, LoginActivity.class));
+                    finish();
+                }
+            }
+        };*/
 
         mTitle = mDrawerTitle = getTitle();
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -76,13 +107,8 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
         };
         mDrawerLayout.addDrawerListener(mDrawerToggle);
 
-        // set up geofencing
-        mGeofenceList = new ArrayList<Geofence>();
-
-        // Get the geofences used. Geofence data is hard coded in this sample.
-        populateGeofenceList();
-        // Kick off the request to build GoogleApiClient.
-        buildGoogleApiClient();
+        // start in download fragment
+        // getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new DownloadFragment()).commit();
     }
 
     @Override
@@ -107,7 +133,6 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
             } else {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new DownloadFragment()).commit();
             }
-
             mDrawerList.setItemChecked(position, true);
             setTitle(mTabTitles[position]);
             mDrawerLayout.closeDrawer(mDrawerList);
@@ -196,6 +221,7 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
                     getGeofencePendingIntent()
             ).setResultCallback(this); // Result processed in onResult().
         } catch (SecurityException securityException) {
+            // Toast.makeText(mContext, "Please accept location permissions", Toast.LENGTH_SHORT).show();
             Log.i("Navigation Activity", "Security exception");
         }
     }

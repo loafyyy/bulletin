@@ -1,6 +1,5 @@
 package com.bulletin.android;
 
-import android.app.IntentService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -10,16 +9,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +55,10 @@ public class DownloadFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // add geofences
-                ((NavigationActivity) getActivity()).addGeofencesHandler();
+
+                // ((NavigationActivity) getActivity()).addGeofencesHandler();
+
+                downloadPics("images");
             }
         });
         return view;
