@@ -13,6 +13,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -50,7 +51,7 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
     private Context mContext;
 
     // Geofencing
-    private ArrayList<Geofence> mGeofenceList;
+    private ArrayList<Geofence> mGeofenceList = new ArrayList<Geofence>();
     private GoogleApiClient mGoogleApiClient;
     private GeofencingClient mGeofencingClient;
     private PendingIntent mGeofencePendingIntent;
@@ -61,8 +62,6 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
         setContentView(R.layout.activity_navigation);
 
         // set up geofencing
-        mGeofenceList = new ArrayList<Geofence>();
-        populateGeofenceList();
         mGeofencingClient = LocationServices.getGeofencingClient(this);
 
         // Kick off the request to build GoogleApiClient.
@@ -80,6 +79,7 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
                 if (user == null) {
                     // user auth state is changed - user is null
                     // launch login activity
+                    Log.i("NavigationActivity", "logging out");
                     startActivity(new Intent(mContext, LoginActivity.class));
                     finish();
                 }
@@ -134,7 +134,7 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
             // go to correct fragment based on tab selected
             if (position == 0) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new UploadFragment()).commit();
-            } else if (position == 1){
+            } else if (position == 1) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new DownloadFragment()).commit();
             } else {
                 getSupportFragmentManager().beginTransaction().replace(R.id.content_frame, new SettingsFragment()).commit();
@@ -190,19 +190,19 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
         mGoogleApiClient.connect();
     }
 
+    // create each geofence from Constants.java and add to list
     public void populateGeofenceList() {
         for (Map.Entry<String, LatLng> entry : Constants.LANDMARKS.entrySet()) {
             mGeofenceList.add(new Geofence.Builder()
                     // Set the request ID of the geofence. This is a string to identify this
                     // geofence.
                     .setRequestId(entry.getKey())
-
                     .setCircularRegion(
                             entry.getValue().latitude,
                             entry.getValue().longitude,
                             Constants.GEOFENCE_RADIUS_IN_METERS
                     )
-                    .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+                    .setExpirationDuration(Geofence.NEVER_EXPIRE)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                             Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build());
@@ -218,12 +218,15 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
     }
 
     // triggered at download button press
+    // monitors the given area using the settings passed to the GeofencingRequest and
+    // shoots a PendingIntent when a geofence transition, entering or exiting the area, takes place.
     public void addGeofencesHandler() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 0);
             return;
         }
+        populateGeofenceList();
         mGeofencingClient.addGeofences(getGeofencingRequest(), getGeofencePendingIntent())
                 .addOnSuccessListener(this, new OnSuccessListener<Void>() {
                     @Override
@@ -253,7 +256,7 @@ public class NavigationActivity extends AppCompatActivity implements GoogleApiCl
         }
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         mGeofencePendingIntent = PendingIntent.getService(this, 0, intent, PendingIntent.
-                FLAG_UPDATE_CURRENT);
+                FLAG_CANCEL_CURRENT);
         return mGeofencePendingIntent;
     }
 }
